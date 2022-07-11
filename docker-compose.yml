@@ -1,7 +1,7 @@
 version: '3'
 services:
   frontend:
-    build: ./frontend
+    build: frontend
     container_name: frontend-to-do-list
     tty: true
     stdin_open: true
@@ -12,10 +12,9 @@ services:
     environment:
       - REACT_APP_API_HOST=backend
     depends_on:
-      - database
       - backend
   backend:
-    build: ./backend
+    build: backend
     container_name: backend-to-do-list
     tty: true
     stdin_open: true
