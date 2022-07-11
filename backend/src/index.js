@@ -15,7 +15,7 @@ app.use(cors());
 
 app.use(bodyParser.json());
 
-app.use('/tasks', tasks);
+app.use('/api/v2/tasks', tasks);
 
 app.use(handleErrors);
 

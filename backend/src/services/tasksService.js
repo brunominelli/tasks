@@ -1,6 +1,6 @@
-const TasksModel = require('../models/tasksModel');
+const { Tasks } = require('../database/models');
 
-const Tasks = {
+const TasksService = {
   async createTask(task, deadline) {
     if (!task) {
       const error = new Error('"Task" is required!');
@@ -14,18 +14,17 @@ const Tasks = {
       throw error;
     }
 
-    const tasks = await TasksModel.createTask(task, deadline);
+    const tasks = await Tasks.create({ task, deadline });
     return tasks;
   },
   async readTasks() {
-    const tasks = await TasksModel.readTasks();
+    const tasks = await Tasks.findAll();
     return tasks;
   },
   async readTaskById(id) {
-    const tasks = await TasksModel.readTaskById(id);
-    const condition = !id || id <= 0 || !tasks;
+    const tasks = await Tasks.findByPk(id);
 
-    if (condition) {
+    if (!tasks) {
       const error = new Error('Task not found!');
       error.code = 404;
       throw error;
@@ -48,13 +47,13 @@ const Tasks = {
       throw error;
     }
 
-    await TasksModel.updateTask(id, task, deadline);
+    await Tasks.update({ task, deadline }, { where: { id } });
     return { id: Number(id), task, deadline };
   },
   async deleteTask(id) {
     const task = await this.readTaskById(id);
-    if (task) await TasksModel.deleteTask(id);
+    if (task) await Tasks.destroy({ where: { id } });
   },
 };
 
-module.exports = Tasks;
+module.exports = TasksService;
