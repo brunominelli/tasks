@@ -16,7 +16,8 @@ function Home() {
 
   useEffect(() => {
     async function readTasks() {
-      const tasks = await Tasks.readTasks()
+      const tasks = await Tasks.readTasks();
+      console.log(tasks);
       setTasks(tasks);
     }
     readTasks();
@@ -76,7 +77,7 @@ function Home() {
               onChange={ (e) => setTask(e.target.value) }
             />
             <Input
-              type="date"
+              type="datetime-local"
               id="deadline"
               name="deadline"
               value={ deadline }
