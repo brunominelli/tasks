@@ -4,7 +4,7 @@ import Container from './styles';
 function Header() {
   return (
     <Container>
-      <h1>To Do List</h1>
+      <h1>Tasks</h1>
     </Container>
   );
 }
