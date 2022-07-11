@@ -22,7 +22,7 @@
   </li>
 </ul>
 
-<h2>&#xFE0F; Tecnologias Utilizadas</h2>
+<h2>&#x1F527; Tecnologias Utilizadas</h2>
 <ul>
   <li><strong>Desenvolvimento Frontend:</strong> React</li>
   <li><strong>Desenvolvimento Backend:</strong> Node, Express</li>
