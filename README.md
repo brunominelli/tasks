@@ -1,4 +1,4 @@
-<h1 style="text-align: center">Tasks - Lista de Tarefas</h1>
+<h1 align="center">Tasks - Lista de Tarefas</h1>
 
 <h2>&#x1F4DD; Descrição</h2>
 <p>Você precisa organizar as tarefas do seu dia a dia. Tasks é uma aplicação web que permite que você organize suas atividades diárias para que você possa melhorar sua qualidade de vida por meio do gerenciamento do seu próprio tempo.</p>
