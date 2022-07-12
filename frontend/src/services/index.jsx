@@ -1,7 +1,6 @@
 const API_ENDPOINT = import.meta.env.VITE_API_ENDPOINT;
 const API_VERSION = import.meta.env.VITE_API_VERSION;
 const API_TASKS = import.meta.env.VITE_API_TASKS;
-console.log(`${API_ENDPOINT}${API_VERSION}${API_TASKS}`);
 
 const Tasks = {
   async createTasks(task, deadline) {
