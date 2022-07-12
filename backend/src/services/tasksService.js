@@ -14,9 +14,13 @@ const TasksService = {
       throw error;
     }
 
-    const tasks = await Tasks.create({ task, deadline });
+    const tasks = await Tasks.create(
+      { task, deadline },
+      { logging: false },
+    );
     return tasks;
   },
+
   async readTasks() {
     const tasks = await Tasks.findAll({
       attributes: {
@@ -34,14 +38,17 @@ const TasksService = {
         ],
         exclude: ['createdAt', 'updatedAt'],
       },
+      logging: false,
     });
     return tasks;
   },
+
   async readTaskById(id) {
     const tasks = await Tasks.findByPk(id, {
       attributes: {
         exclude: ['createdAt', 'updatedAt'],
       },
+      logging: false,
     });
 
     if (!tasks) {
@@ -52,6 +59,7 @@ const TasksService = {
 
     return tasks;
   },
+
   async updateTask(id, task, deadline) {
     await this.readTaskById(id);
 
@@ -67,12 +75,13 @@ const TasksService = {
       throw error;
     }
 
-    await Tasks.update({ task, deadline }, { where: { id } });
+    await Tasks.update({ task, deadline }, { where: { id }, logging: false });
     return { id: Number(id), task, deadline };
   },
+
   async deleteTask(id) {
     const task = await this.readTaskById(id);
-    if (task) await Tasks.destroy({ where: { id } });
+    if (task) await Tasks.destroy({ where: { id }, logging: false });
   },
 };
 
