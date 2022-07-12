@@ -6,7 +6,7 @@ function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route exact path="/:id" element={<Home />} />
+        <Route exact path="/task/:id" element={<Home />} />
         <Route exact path="/" element={<Home />} />
       </Routes>
     </BrowserRouter>

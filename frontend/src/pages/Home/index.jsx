@@ -42,7 +42,7 @@ function Home() {
     const {task, deadline} = await Tasks.readTaskById(id);
     setTask(task);
     setDeadline(deadline);
-    navigate(`/${id}`);
+    navigate(`/task/${id}`);
   }
   
   async function updateTasks() {
@@ -77,7 +77,7 @@ function Home() {
               onChange={ (e) => setTask(e.target.value) }
             />
             <Input
-              type="datetime-local"
+              type="date"
               id="deadline"
               name="deadline"
               value={ deadline }
