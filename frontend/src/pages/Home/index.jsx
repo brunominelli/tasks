@@ -1,15 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Footer from '../../components/Footer';
 import Header from '../../components/Header';
 import Tasks from '../../services';
-import { Button, ButtonDelete, ButtonSubmit, Container, Division, Input, Section, Wrapper } from './styles';
+import {
+  Button,
+  ButtonDelete,
+  ButtonSubmit,
+  Container,
+  Division,
+  Input,
+  Section,
+  Wrapper,
+  WrapperForm
+} from './styles';
 
 function Home() {
   const [tasks, setTasks] = useState([]);
   const [task, setTask] = useState('');
   const [deadline, setDeadline] = useState('');
-  const [isUpdateTask, setIsUpdateTask] = useState(false);
+  const [isUpdatedTask, setIsUpdatedTask] = useState(false);
 
   const params = useParams('/:id');
   const navigate = useNavigate();
@@ -17,7 +27,6 @@ function Home() {
   useEffect(() => {
     async function readTasks() {
       const tasks = await Tasks.readTasks();
-      console.log(tasks);
       setTasks(tasks);
     }
     readTasks();
@@ -38,7 +47,7 @@ function Home() {
   }
 
   async function readTaskById(id) {
-    setIsUpdateTask(true);
+    setIsUpdatedTask(true);
     const {task, deadline} = await Tasks.readTaskById(id);
     setTask(task);
     setDeadline(deadline);
@@ -46,7 +55,7 @@ function Home() {
   }
   
   async function updateTasks() {
-    setIsUpdateTask(false);
+    setIsUpdatedTask(false);
     const { id } = params;
     await Tasks.updateTasks(id, task, deadline);
     setTask('');
@@ -59,14 +68,14 @@ function Home() {
     setTask('');
     setDeadline('');
     navigate('/');
-    if (isUpdateTask) setIsUpdateTask(false);
+    if (isUpdatedTask) setIsUpdatedTask(false);
   }
 
   return (
     <>
       <Header />
       <Container>
-        <Wrapper>
+        <WrapperForm>
           <Division>
             <Input
               type="text"
@@ -85,21 +94,19 @@ function Home() {
             />
           </Division>
             {
-              isUpdateTask ?
+              isUpdatedTask ?
               <ButtonSubmit onClick={ updateTasks }>Edit</ButtonSubmit> :
               <ButtonSubmit
-                onClick={ createTasks }
+                onClick={ () => createTasks() }
               >
                 Submit
               </ButtonSubmit>
             }
-        </Wrapper>
+        </WrapperForm>
         <Wrapper>
           <Division>
             <h1>You have {tasks.length} task(s)</h1>
           </Division>
-        </Wrapper>
-        <Wrapper>
           {tasks.map(({ id, task, deadline }, index) => 
             <Section key={ index }>
               <p>{ task }</p>
