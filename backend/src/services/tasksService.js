@@ -1,4 +1,4 @@
-const { Tasks } = require('../database/models');
+const { Tasks, sequelize } = require('../database/models');
 
 const TasksService = {
   async createTask(task, deadline) {
@@ -18,11 +18,31 @@ const TasksService = {
     return tasks;
   },
   async readTasks() {
-    const tasks = await Tasks.findAll();
+    const tasks = await Tasks.findAll({
+      attributes: {
+        include: [
+          'deadline',
+          [
+            sequelize
+              .fn(
+                'DATE_FORMAT',
+                sequelize.col('deadline'),
+                '%d/%m/%Y',
+              ),
+            'deadline',
+          ],
+        ],
+        exclude: ['createdAt', 'updatedAt'],
+      },
+    });
     return tasks;
   },
   async readTaskById(id) {
-    const tasks = await Tasks.findByPk(id);
+    const tasks = await Tasks.findByPk(id, {
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
+    });
 
     if (!tasks) {
       const error = new Error('Task not found!');
