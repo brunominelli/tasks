@@ -1,8 +1,13 @@
 import React from 'react';
-import AppRoutes from './routes';
+import TasksProvider from './store/provider/tasks';
+import AppRoutes from './store/routes';
 
 function App() {
-  return <AppRoutes />;
+  return (
+    <TasksProvider>
+      <AppRoutes />
+    </TasksProvider>
+  );
 }
 
 export default App;

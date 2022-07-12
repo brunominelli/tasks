@@ -1,8 +1,8 @@
-import React, { useEffect, useState} from 'react';
+import React, { useContext, useEffect, useState} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Footer from '../../components/Footer';
 import Header from '../../components/Header';
-import Tasks from '../../services';
+import TasksContext from '../../store/context/tasks';
 import {
   Button,
   ButtonDelete,
@@ -16,59 +16,47 @@ import {
 } from './styles';
 
 function Home() {
-  const [tasks, setTasks] = useState([]);
-  const [task, setTask] = useState('');
-  const [deadline, setDeadline] = useState('');
-  const [isUpdatedTask, setIsUpdatedTask] = useState(false);
+  const {
+    task,
+    setTask,
+    deadline,
+    setDeadline,
+    tasks,
+    getTasks,
+    createTasks,
+    readTaskById,
+    updateTasks,
+    deleteTasks,
+  } = useContext(TasksContext);
 
-  const params = useParams('/:id');
+  const [isEdit, setIsEdit] = useState(false);
+
+  const { id } = useParams('/:id');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    async function readTasks() {
-      const tasks = await Tasks.readTasks();
-      setTasks(tasks);
-    }
-    readTasks();
-  }, []);
+  useEffect(() => { getTasks() }, []);
+  useEffect(() => { getTasks() }, [tasks]);
 
-  useEffect(() => {
-    async function readTasks() {
-      const tasks = await Tasks.readTasks()
-      setTasks(tasks);
-    }
-    readTasks();
-  }, [tasks]);
-
-  async function createTasks() {
-    await Tasks.createTasks(task, deadline);
-    setTask('');
-    setDeadline('');
+  async function handleClickCreateButton() {
+    await createTasks();
   }
 
-  async function readTaskById(id) {
-    setIsUpdatedTask(true);
-    const {task, deadline} = await Tasks.readTaskById(id);
-    setTask(task);
-    setDeadline(deadline);
+  async function handleClickEditButton(id) {
     navigate(`/task/${id}`);
-  }
-  
-  async function updateTasks() {
-    setIsUpdatedTask(false);
-    const { id } = params;
-    await Tasks.updateTasks(id, task, deadline);
-    setTask('');
-    setDeadline('');
-    navigate('/');
+    setIsEdit(true);
+    await readTaskById(id);
   }
 
-  async function deleteTasks(id) {
-    await Tasks.deleteTasks(id);
-    setTask('');
-    setDeadline('');
+  async function handleClickUpdateButton() {
+    setIsEdit(false);
     navigate('/');
-    if (isUpdatedTask) setIsUpdatedTask(false);
+    await updateTasks(id);
+  }
+
+  async function handleClickDeleteButton(id) {
+    setIsEdit(false);
+    navigate('/');
+    await deleteTasks(id);
   }
 
   return (
@@ -94,10 +82,14 @@ function Home() {
             />
           </Division>
             {
-              isUpdatedTask ?
-              <ButtonSubmit onClick={ updateTasks }>Edit</ButtonSubmit> :
+              isEdit ?
               <ButtonSubmit
-                onClick={ () => createTasks() }
+                onClick={ () => handleClickUpdateButton() }
+              >
+                Edit
+              </ButtonSubmit> :
+              <ButtonSubmit
+                onClick={ () => handleClickCreateButton() }
               >
                 Submit
               </ButtonSubmit>
@@ -114,13 +106,13 @@ function Home() {
               <Division>
                 <Button
                   value={ id }
-                  onClick={ (e) => readTaskById(e.target.value) }
+                  onClick={ (e) => handleClickEditButton(e.target.value) }
                 >
                   Edit
                 </Button>
                 <ButtonDelete
                   value={ id }
-                  onClick={ (e) => deleteTasks(e.target.value) }
+                  onClick={ (e) => handleClickDeleteButton(e.target.value) }
                 >
                   Delete
                 </ButtonDelete>
