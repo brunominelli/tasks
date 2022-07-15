@@ -1,6 +1,6 @@
-const TasksModel = require('../models/tasksModel');
+const { Tasks, sequelize } = require('../database/models');
 
-const Tasks = {
+const TasksService = {
   async createTask(task, deadline) {
     if (!task) {
       const error = new Error('"Task" is required!');
@@ -14,18 +14,44 @@ const Tasks = {
       throw error;
     }
 
-    const tasks = await TasksModel.createTask(task, deadline);
+    const tasks = await Tasks.create(
+      { task, deadline },
+      { logging: false },
+    );
     return tasks;
   },
-  async readTasks() {
-    const tasks = await TasksModel.readTasks();
-    return tasks;
-  },
-  async readTaskById(id) {
-    const tasks = await TasksModel.readTaskById(id);
-    const condition = !id || id <= 0 || !tasks;
 
-    if (condition) {
+  async readTasks() {
+    const tasks = await Tasks.findAll({
+      attributes: {
+        include: [
+          'deadline',
+          [
+            sequelize
+              .fn(
+                'DATE_FORMAT',
+                sequelize.col('deadline'),
+                '%d/%m/%Y',
+              ),
+            'deadline',
+          ],
+        ],
+        exclude: ['createdAt', 'updatedAt'],
+      },
+      logging: false,
+    });
+    return tasks;
+  },
+
+  async readTaskById(id) {
+    const tasks = await Tasks.findByPk(id, {
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
+      logging: false,
+    });
+
+    if (!tasks) {
       const error = new Error('Task not found!');
       error.code = 404;
       throw error;
@@ -33,6 +59,7 @@ const Tasks = {
 
     return tasks;
   },
+
   async updateTask(id, task, deadline) {
     await this.readTaskById(id);
 
@@ -48,13 +75,14 @@ const Tasks = {
       throw error;
     }
 
-    await TasksModel.updateTask(id, task, deadline);
+    await Tasks.update({ task, deadline }, { where: { id }, logging: false });
     return { id: Number(id), task, deadline };
   },
+
   async deleteTask(id) {
     const task = await this.readTaskById(id);
-    if (task) await TasksModel.deleteTask(id);
+    if (task) await Tasks.destroy({ where: { id }, logging: false });
   },
 };
 
-module.exports = Tasks;
+module.exports = TasksService;

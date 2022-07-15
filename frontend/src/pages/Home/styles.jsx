@@ -16,15 +16,14 @@ const Wrapper = styled.article`
   flex-flow: row wrap;
   align-items: center;
   justify-content: center;
-  width: 100%;
+  min-width: 50%;
+  max-width: 100%;
+`;
 
-  h1 {
-    color: ${props => props.theme.secondary};
-    font-size: 2rem;
-    padding: 1rem 2rem;
-    text-align: center;
-    width: 100%;
-  }
+const WrapperForm = styled(Wrapper)`
+  flex-flow: row nowrap;
+  min-width: 50%;
+  max-width: 75%;
 `;
 
 const Section = styled.section`
@@ -68,7 +67,15 @@ const Division = styled.div`
   align-items: center;
   justify-content: center;
   padding: 0.5rem 1rem;
-  width: 75%;
+  width: 100%;
+  
+  h1 {
+    color: ${props => props.theme.secondary};
+    font-size: 2rem;
+    padding: 1rem 2rem;
+    text-align: center;
+    width: 100%;
+  }
 `;
 
 const Input = styled.input`
@@ -126,6 +133,7 @@ const ButtonDelete = styled(Button)`
 export {
   Container,
   Wrapper,
+  WrapperForm,
   Section,
   Division,
   Input,

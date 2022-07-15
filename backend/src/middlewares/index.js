@@ -1,5 +1,6 @@
-const handleErrors = (error, _request, response) => {
-  if (error) {
+const handleErrors = (error, _request, response, _next) => {
+  console.log(error);
+  if (error.code) {
     return response.status(error.code).json({ message: error.message });
   }
 

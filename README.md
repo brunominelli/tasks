@@ -93,7 +93,7 @@
   <li>Permitir que a pessoa usuária ordene as tarefas por desrição.</li>
 </ul>
 
-<h3>Containerização</h3>
+<h3>Conteinerização</h3>
 <ul>
   <li>Criar um ambiente em Docker para que a aplicação funcione em qualquer tipo de dispositivo.</li>
 </ul>

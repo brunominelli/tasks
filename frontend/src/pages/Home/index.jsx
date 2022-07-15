@@ -1,71 +1,69 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState} from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Footer from '../../components/Footer';
 import Header from '../../components/Header';
-import Tasks from '../../services';
-import { Button, ButtonDelete, ButtonSubmit, Container, Division, Input, Section, Wrapper } from './styles';
+import TasksContext from '../../store/context/tasks';
+import {
+  Button,
+  ButtonDelete,
+  ButtonSubmit,
+  Container,
+  Division,
+  Input,
+  Section,
+  Wrapper,
+  WrapperForm
+} from './styles';
 
 function Home() {
-  const [tasks, setTasks] = useState([]);
-  const [task, setTask] = useState('');
-  const [deadline, setDeadline] = useState('');
-  const [isUpdateTask, setIsUpdateTask] = useState(false);
+  const {
+    task,
+    setTask,
+    deadline,
+    setDeadline,
+    tasks,
+    getTasks,
+    createTasks,
+    readTaskById,
+    updateTasks,
+    deleteTasks,
+  } = useContext(TasksContext);
 
-  const params = useParams('/:id');
+  const [isEdit, setIsEdit] = useState(false);
+
+  const { id } = useParams('/:id');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    async function readTasks() {
-      const tasks = await Tasks.readTasks()
-      setTasks(tasks);
-    }
-    readTasks();
-  }, []);
+  useEffect(() => { getTasks() }, []);
+  useEffect(() => { getTasks() }, [tasks]);
 
-  useEffect(() => {
-    async function readTasks() {
-      const tasks = await Tasks.readTasks()
-      setTasks(tasks);
-    }
-    readTasks();
-  }, [tasks]);
-
-  async function createTasks() {
-    await Tasks.createTasks(task, deadline);
-    setTask('');
-    setDeadline('');
+  async function handleClickCreateButton() {
+    await createTasks();
   }
 
-  async function readTaskById(id) {
-    setIsUpdateTask(true);
-    const {task, deadline} = await Tasks.readTaskById(id);
-    setTask(task);
-    setDeadline(deadline);
-    navigate(`/${id}`);
+  async function handleClickEditButton(id) {
+    navigate(`/task/${id}`);
+    setIsEdit(true);
+    await readTaskById(id);
   }
-  
-  async function updateTasks() {
-    setIsUpdateTask(false);
-    const { id } = params;
-    await Tasks.updateTasks(id, task, deadline);
-    setTask('');
-    setDeadline('');
+
+  async function handleClickUpdateButton() {
+    setIsEdit(false);
     navigate('/');
+    await updateTasks(id);
   }
 
-  async function deleteTasks(id) {
-    await Tasks.deleteTasks(id);
-    setTask('');
-    setDeadline('');
+  async function handleClickDeleteButton(id) {
+    setIsEdit(false);
     navigate('/');
-    if (isUpdateTask) setIsUpdateTask(false);
+    await deleteTasks(id);
   }
 
   return (
     <>
       <Header />
       <Container>
-        <Wrapper>
+        <WrapperForm>
           <Division>
             <Input
               type="text"
@@ -84,21 +82,23 @@ function Home() {
             />
           </Division>
             {
-              isUpdateTask ?
-              <ButtonSubmit onClick={ updateTasks }>Edit</ButtonSubmit> :
+              isEdit ?
               <ButtonSubmit
-                onClick={ createTasks }
+                onClick={ () => handleClickUpdateButton() }
+              >
+                Edit
+              </ButtonSubmit> :
+              <ButtonSubmit
+                onClick={ () => handleClickCreateButton() }
               >
                 Submit
               </ButtonSubmit>
             }
-        </Wrapper>
+        </WrapperForm>
         <Wrapper>
           <Division>
             <h1>You have {tasks.length} task(s)</h1>
           </Division>
-        </Wrapper>
-        <Wrapper>
           {tasks.map(({ id, task, deadline }, index) => 
             <Section key={ index }>
               <p>{ task }</p>
@@ -106,13 +106,13 @@ function Home() {
               <Division>
                 <Button
                   value={ id }
-                  onClick={ (e) => readTaskById(e.target.value) }
+                  onClick={ (e) => handleClickEditButton(e.target.value) }
                 >
                   Edit
                 </Button>
                 <ButtonDelete
                   value={ id }
-                  onClick={ (e) => deleteTasks(e.target.value) }
+                  onClick={ (e) => handleClickDeleteButton(e.target.value) }
                 >
                   Delete
                 </ButtonDelete>
